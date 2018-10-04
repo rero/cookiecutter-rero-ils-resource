@@ -1,0 +1,8 @@
+{
+    "name": "resource",
+    "resource_name": "{{ cookiecutter.name | replace('-','_') }}s",
+    "class_name": "{{ cookiecutter.name | titlecase | replace(' ','') }}",
+    "pid_type": "{{ cookiecutter.name[:4] }}",
+    "app_name": "rero_ils",
+    "_extensions": ["jinja2_stringcase.StringCaseExtension"]
+}
