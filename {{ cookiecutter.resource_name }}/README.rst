@@ -91,6 +91,6 @@ Copy this directory to your modules directory and addapt the following files.
         'template': '{{ cookiecutter.app_name }}/detailed_view_{{ cookiecutter.resource_name }}.html',
         'record_class': '{{ cookiecutter.app_name }}.modules.{{ cookiecutter.resource_name }}.api:{{ cookiecutter.class_name }}',
         'permission_factory_imp':
-            'reroils_record_editor.permissions.cataloguer_permission_factory'
+            'rero_ils.permissions.cataloguer_permission_factory'
     }
 ```
