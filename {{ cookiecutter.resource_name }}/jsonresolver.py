@@ -18,11 +18,20 @@
 """{{ cookiecutter.class_name }} resolver."""
 
 import jsonresolver
-
-from ..jsonresolver import resolve_json_refs
+from flask import current_app
+from invenio_pidstore.models import PersistentIdentifier, PIDStatus
 
 
 @jsonresolver.route('/api/{{ cookiecutter.resource_name }}/<pid>', host='ils.rero.ch')
 def {{ cookiecutter.name }}_resolver(pid):
-    """{{ cookiecutter.class_name }} resolver."""
-    return resolve_json_refs('{{ cookiecutter.name }}', pid)
+    """Resolver for {{ cookiecutter.name }} record."""
+    persistent_id = PersistentIdentifier.get('{{ cookiecutter.pid_type }}', pid)
+    if persistent_id.status == PIDStatus.REGISTERED:
+        return dict(pid=persistent_id.pid_value)
+    current_app.logger.error(
+        'Doc resolver error: /api/{{ cookiecutter.resource_name }}/{pid} {persistent_id}'.format(
+            pid=pid,
+            persistent_id=persistent_id
+        )
+    )
+    raise Exception('unable to resolve')
