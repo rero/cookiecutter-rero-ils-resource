@@ -15,18 +15,14 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+"""{{ cookiecutter.class_name }} resolver."""
 
-"""Persistent identifier fetchers."""
+import jsonresolver
+
+from ..jsonresolver import resolve_json_refs
 
 
-from __future__ import absolute_import, print_function
-
-from functools import partial
-
-from .providers import {{ cookiecutter.class_name }}Provider
-from ..fetchers import id_fetcher
-
-{{ cookiecutter.name }}_id_fetcher = partial(
-    id_fetcher,
-    provider={{ cookiecutter.class_name }}Provider
-)
+@jsonresolver.route('/api/{{ cookiecutter.resource_name }}/<pid>', host='ils.rero.ch')
+def {{ cookiecutter.name }}_resolver(pid):
+    """{{ cookiecutter.class_name }} resolver."""
+    return resolve_json_refs('{{ cookiecutter.name }}', pid)

@@ -23,7 +23,7 @@ Copy this directory to your modules directory and addapt the following files.
 
 ```
     'invenio_base.blueprints': [
-        '{{ cookiecutter.resource_name }} = rero_ils.modules.{{ cookiecutter.resource_name }}.views:blueprint'
+        '{{ cookiecutter.resource_name }} = rero_ils.modules.{{ cookiecutter.resource_name }}.views:blueprint',
         ...
     ],
     'invenio_db.models': [
@@ -31,11 +31,11 @@ Copy this directory to your modules directory and addapt the following files.
         ...
     ],
         'invenio_pidstore.minters': [
-        '{{ cookiecutter.name }}_id = rero_ils.modules.{{ cookiecutter.resource_name }}.minters:{{ cookiecutter.name }}_id_minter'
+        '{{ cookiecutter.name }}_id = rero_ils.modules.{{ cookiecutter.resource_name }}.api:{{ cookiecutter.name }}_id_minter',
         ...
     ],
     'invenio_pidstore.fetchers': [
-        '{{ cookiecutter.name }}_id = rero_ils.modules.{{ cookiecutter.resource_name }}.fetchers:{{ cookiecutter.name }}_id_fetcher'
+        '{{ cookiecutter.name }}_id = rero_ils.modules.{{ cookiecutter.resource_name }}.api:{{ cookiecutter.name }}_id_fetcher',
     ...
     ],
     'invenio_jsonschemas.schemas': [
@@ -46,9 +46,22 @@ Copy this directory to your modules directory and addapt the following files.
         '{{ cookiecutter.resource_name }} = rero_ils.modules.{{ cookiecutter.resource_name }}.mappings',
         ...
     ]
+    'invenio_celery.tasks': [
+        'rero_ils_{{ cookiecutter.resource_name }} = rero_ils.modules.{{ cookiecutter.resource_name }}.tasks',
+        ...
+    ]
+    'invenio_records.jsonresolver': [
+        '{{ cookiecutter.resource_name }} = rero_ils.modules.{{ cookiecutter.resource_name }}.jsonresolver',
+        ...
+    ]
 ```
 
 ## Please add following to the *config.py* file section:
+### Import:
+```
+from .modules.{{ cookiecutter.resource_name }}.api import {{ cookiecutter.class_name }}
+```
+
 ### RECORDS\_REST\_ENDPOINTS
 ```
 	{{ cookiecutter.pid_type }}=dict(
@@ -58,6 +71,7 @@ Copy this directory to your modules directory and addapt the following files.
         search_class=RecordsSearch,
         search_index='{{ cookiecutter.resource_name }}',
         search_type=None,
+        indexer_class=IlsRecordIndexer,
         record_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_response'),
@@ -68,22 +82,41 @@ Copy this directory to your modules directory and addapt the following files.
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
         },
+        record_loaders={   
+            'application/json': lambda: {{ cookiecutter.class_name }}(request.get_json()),
+        },
+        record_class='rero_ils.modules.{{ cookiecutter.resource_name }}.api:{{ cookiecutter.class_name }}',
         list_route='/{{ cookiecutter.resource_name }}/',
         item_route='/{{ cookiecutter.resource_name }}/<pid({{ cookiecutter.pid_type }}):pid_value>',
         default_media_type='application/json',
         max_result_window=10000,
-        search_factory_imp='rero_ils.query:and_search_factory'
+        search_factory_imp='rero_ils.query:search_factory',
+        read_permission_factory_imp=allow_all,
+        list_permission_factory_imp=allow_all,
+        create_permission_factory_imp=deny_all,
+        update_permission_factory_imp=deny_all,
+        delete_permission_factory_imp=deny_all,
     ),
 ```
 
 ### RECORDS\_UI\_ENDPOINTS
 ```
-	'{{ cookiecutter.pid_type }}': {
-        'pid_type': '{{ cookiecutter.pid_type }}',
-        'route': '/{{ cookiecutter.resource_name }}/<pid_value>',
-        'template': '{{ cookiecutter.app_name }}/detailed_view_{{ cookiecutter.resource_name }}.html',
-        'record_class': '{{ cookiecutter.app_name }}.modules.{{ cookiecutter.resource_name }}.api:{{ cookiecutter.class_name }}',
-        'permission_factory_imp':
-            'rero_ils.permissions.cataloguer_permission_factory'
-    }
+	'{{ cookiecutter.pid_type }}': dict(
+        pid_type= '{{ cookiecutter.pid_type }}',
+        route= '/{{ cookiecutter.resource_name }}/<pid_value>',
+        template= 'rero_ils/detailed_view_{{ cookiecutter.resource_name }}.html',
+        record_class= 'rero_ils.modules.{{ cookiecutter.resource_name }}.api:{{ cookiecutter.class_name }}',
+        permission_factory_imp='rero_ils.permissions.'
+                               'librarian_permission_factory',
+    ),
 ```
+
+### RECORDS\_JSON\_SCHEMA
+```
+    '{{ cookiecutter.pid_type }}': '/{{ cookiecutter.resource_name }}/{{ cookiecutter.name }}-v0.0.1.json',
+```
+
+
+## Note for *api.py* file :
+
+If create and update functions are similar to rero_ils.modules.api then, these two functions can be safely removed.
