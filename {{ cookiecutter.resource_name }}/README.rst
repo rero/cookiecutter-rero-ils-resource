@@ -73,21 +73,21 @@ from .modules.{{ cookiecutter.resource_name }}.api import {{ cookiecutter.class_
         search_type=None,
         indexer_class=IlsRecordIndexer,
         record_serializers={
-            'application/json': ('invenio_records_rest.serializers'
-                                 ':json_v1_response'),
+            'application/json': (
+                'rero_ils.modules.serializers:json_v1_response'
+            )
         },
         search_serializers={
-            'application/rero+json': ('rero_ils.modules.serializers'
-                                      ':json_v1_search'),
-            'application/json': ('invenio_records_rest.serializers'
-                                 ':json_v1_search'),
+            'application/json': (
+                'rero_ils.modules.serializers:json_v1_search'
+            )
         },
         record_loaders={   
             'application/json': lambda: {{ cookiecutter.class_name }}(request.get_json()),
         },
         record_class='rero_ils.modules.{{ cookiecutter.resource_name }}.api:{{ cookiecutter.class_name }}',
         list_route='/{{ cookiecutter.resource_name }}/',
-        item_route='/{{ cookiecutter.resource_name }}/<pid({{ cookiecutter.pid_type }}, record_class="rero_ils.modules.{{ cookiecutter.resource_name }}.api:{{ cookiecutter.class_name }}")):pid_value>',
+        item_route='/{{ cookiecutter.resource_name }}/<pid({{ cookiecutter.pid_type }}, record_class="rero_ils.modules.{{ cookiecutter.resource_name }}.api:{{ cookiecutter.class_name }}"):pid_value>',
         default_media_type='application/json',
         max_result_window=10000,
         search_factory_imp='rero_ils.query:search_factory',
