@@ -87,7 +87,7 @@ from .modules.{{ cookiecutter.resource_name }}.api import {{ cookiecutter.class_
         },
         record_class='rero_ils.modules.{{ cookiecutter.resource_name }}.api:{{ cookiecutter.class_name }}',
         list_route='/{{ cookiecutter.resource_name }}/',
-        item_route='/{{ cookiecutter.resource_name }}/<pid({{ cookiecutter.pid_type }}):pid_value>',
+        item_route='/{{ cookiecutter.resource_name }}/<pid({{ cookiecutter.pid_type }}, record_class="rero_ils.modules.{{ cookiecutter.resource_name }}.api:{{ cookiecutter.class_name }}")):pid_value>',
         default_media_type='application/json',
         max_result_window=10000,
         search_factory_imp='rero_ils.query:search_factory',
