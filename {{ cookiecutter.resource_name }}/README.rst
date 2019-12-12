@@ -82,7 +82,7 @@ from .modules.{{ cookiecutter.resource_name }}.api import {{ cookiecutter.class_
                 'rero_ils.modules.serializers:json_v1_search'
             )
         },
-        record_loaders={   
+        record_loaders={
             'application/json': lambda: {{ cookiecutter.class_name }}(request.get_json()),
         },
         record_class='rero_ils.modules.{{ cookiecutter.resource_name }}.api:{{ cookiecutter.class_name }}',
