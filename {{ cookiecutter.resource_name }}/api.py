@@ -45,6 +45,7 @@ class {{ cookiecutter.class_name }}sSearch(IlsRecordsSearch):
 
         index = '{{ cookiecutter.resource_name }}'
 
+
 class {{ cookiecutter.class_name }}(IlsRecord):
     """{{ cookiecutter.class_name }} class."""
 
